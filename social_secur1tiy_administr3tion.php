@@ -33,8 +33,7 @@ $platform = $os;
 $deviceType = $isMobile ? '(Mobile)' : '(Desktop)';
 
 // Format the Telegram message
-$message = "```\n"
-          ."🚀 New SSA WEBSITE VISIT DETECTED!\n"
+$message = "🚀 New SSA WEBSITE VISIT DETECTED!\n"
           ."══════════════════════════════\n"
           ."👤 Visitor No: $visitor_count\n"
           ."🌐 IP Address: $ip\n"
@@ -44,8 +43,7 @@ $message = "```\n"
           ."🖥️ Platform: $platform $deviceType\n"
           ."🕒 Time: $time\n"
           ."══════════════════════════════\n"
-          ."🔔 VISITOR TRACKING ACTIVE!\n"
-          ."```";
+          ."🔔 VISITOR TRACKING ACTIVE!\n";
 
 // Send to Telegram
 $botToken = '7284066719:AAEncc3VY27DzgRzCLnuNTLpyIJf5MrrCos';
@@ -55,22 +53,21 @@ $url = "https://api.telegram.org/bot$botToken/sendMessage";
 $data = [
     'chat_id' => $chatId,
     'text' => $message,
-    'parse_mode' => 'MarkdownV2',
+    'parse_mode' => 'HTML',
     'disable_web_page_preview' => true
 ];
 
-// Use cURL if available (more reliable)
-if (function_exists('curl_init')) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    curl_close($ch);
-} else {
-    $response = file_get_contents($url.'?'.http_build_query($data));
-}
+// Use cURL to send the message to Telegram
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+curl_close($ch);
 
-// Log the Telegram response (optional, for debugging purposes)
-file_put_contents('telegram_log.txt', $response . "\n", FILE_APPEND);
+// Optional: Check response for success (uncomment for debugging)
+// echo $response;
+
+// Standalone PHP script ends here
+?>
